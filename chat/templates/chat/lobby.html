@@ -10,13 +10,14 @@
 
   <form id="form">
     <input type="text" name="message" placeholder="Type your message here..." />
-    {% comment %} <button type="submit">Send</button> {% endcomment %}
+    <button type="submit">Send</button>
   </form>
 
   <div id="messages"></div>
 
   <script type="text/javascript">
-    let url = `ws://${window.location.host}/ws/socket-server/`;
+    let wsStart = window.location.protocol === "https:" ? "wss://" : "ws://";
+    let url = `${wsStart}${window.location.host}/ws/socket-server/`;
     const chatSocket = new WebSocket(url);
 
     chatSocket.onmessage = function(e){
