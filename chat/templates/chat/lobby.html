@@ -20,16 +20,23 @@
     let url = `${wsStart}${window.location.host}/ws/socket-server/`;
     const chatSocket = new WebSocket(url);
 
+    // 🔥 Link detection function
+    function linkify(text) {
+      let urlPattern = /(https?:\/\/[^\s]+)/g;
+      return text.replace(urlPattern, function(url) {
+        return `<a href="${url}" target="_blank">${url}</a>`;
+      });
+    }
+
     chatSocket.onmessage = function(e){
       let data = JSON.parse(e.data);
       console.log('Data:', data);
 
       if(data.type === 'chat_message'){
         let messages = document.getElementById('messages');
-        messages.innerHTML += `<h3>${data.message}</h3>`;
-        //messages.insertAdjacentHTML('beforeend', `<div>
-        //  <p>${data.message}</p>
-        //</div>`)
+
+        // ✅ ONLY change: use linkify here
+        messages.innerHTML += `<h3>${linkify(data.message)}</h3>`;
       }
     }
 
@@ -37,9 +44,11 @@
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       let message = e.target.message.value;
+
       chatSocket.send(JSON.stringify({
         'message': message
       }));
+
       form.reset();
     })
   </script>
